@@ -11,7 +11,9 @@ from folium import Circle, Marker
 BEER_SHEVA_LAT = 31.2518
 BEER_SHEVA_LNG = 34.7913
 RADIUS_M = 15000
-OUTPUT_PATH = "search_area.html"
+OUTPUT_DIR = "output"
+JSON_PATH = os.path.join(OUTPUT_DIR, "amenities_beer_sheva.json")
+OUTPUT_PATH = os.path.join(OUTPUT_DIR, "search_area.html")
 
 
 def create_map(places: list[dict] | None = None) -> folium.Map:
@@ -51,11 +53,11 @@ def create_map(places: list[dict] | None = None) -> folium.Map:
 
 def main():
     places = None
-    json_path = "amenities_beer_sheva.json"
-    if os.path.exists(json_path):
-        with open(json_path, encoding="utf-8") as f:
+    if os.path.exists(JSON_PATH):
+        with open(JSON_PATH, encoding="utf-8") as f:
             places = json.load(f)
-        print(f"Loaded {len(places)} places from {json_path}")
+        print(f"Loaded {len(places)} places from {JSON_PATH}")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     m = create_map(places)
     m.save(OUTPUT_PATH)
     print(f"Saved: {OUTPUT_PATH}")

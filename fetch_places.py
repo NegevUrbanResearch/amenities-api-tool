@@ -6,13 +6,15 @@ import csv
 import json
 import os
 import time
-from urllib.parse import urlencode
 
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BEER_SHEVA_LAT = 31.2518
 BEER_SHEVA_LNG = 34.7913
-RADIUS_M = 25000  # 15 km + 10 km buffer
+RADIUS_M = 15000  # 15 km
 BASE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 
 # All place types from Table 1 (searchable in Nearby Search)
@@ -74,7 +76,11 @@ def flatten_place(place: dict) -> dict:
     }
 
 
-def fetch_all_places(api_key: str, output_dir: str = ".") -> list[dict]:
+OUTPUT_DIR = "output"
+
+
+def fetch_all_places(api_key: str, output_dir: str = OUTPUT_DIR) -> list[dict]:
+    os.makedirs(output_dir, exist_ok=True)
     seen_ids = set()
     results = []
     csv_path = os.path.join(output_dir, "amenities_beer_sheva.csv")
@@ -137,7 +143,7 @@ def fetch_all_places(api_key: str, output_dir: str = ".") -> list[dict]:
 def main():
     api_key = os.environ.get("GOOGLE_PLACES_API_KEY")
     if not api_key:
-        print("Set GOOGLE_PLACES_API_KEY in your environment.")
+        print("Set GOOGLE_PLACES_API_KEY in .env")
         print("Get a key: https://console.cloud.google.com/apis/credentials")
         print("Enable: Places API (and optionally Places API (New))")
         return 1
