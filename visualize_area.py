@@ -8,9 +8,17 @@ import os
 import folium
 from folium import Circle, Marker
 
-BEER_SHEVA_LAT = 31.2518
-BEER_SHEVA_LNG = 34.7913
-RADIUS_M = 15000
+BEER_SHEVA_LAT = 31.2148
+BEER_SHEVA_LNG = 34.8428
+RADIUS_M = 16500
+
+RAHAT_LAT = 31.39250
+RAHAT_LNG = 34.75444
+RAHAT_RADIUS_M = 10000
+
+OFAKIM_LAT = 31.317
+OFAKIM_LNG = 34.617
+OFAKIM_RADIUS_M = 10000
 OUTPUT_DIR = "output"
 JSON_PATH = os.path.join(OUTPUT_DIR, "amenities_beer_sheva.json")
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "search_area.html")
@@ -29,12 +37,40 @@ def create_map(places: list[dict] | None = None) -> folium.Map:
         fill=True,
         fill_color="#3388ff",
         fill_opacity=0.2,
-        popup=f"Search radius: {RADIUS_M / 1000:.0f} km",
+        popup=f"Beer Sheva radius: {RADIUS_M / 1000:.0f} km",
     ).add_to(m)
     Marker(
         location=[BEER_SHEVA_LAT, BEER_SHEVA_LNG],
         popup="Beer Sheva (center)",
         icon=folium.Icon(color="red", icon="info-sign"),
+    ).add_to(m)
+    Circle(
+        location=[RAHAT_LAT, RAHAT_LNG],
+        radius=RAHAT_RADIUS_M,
+        color="#ff7800",
+        fill=True,
+        fill_color="#ff7800",
+        fill_opacity=0.15,
+        popup=f"Rahat radius: {RAHAT_RADIUS_M / 1000:.0f} km",
+    ).add_to(m)
+    Marker(
+        location=[RAHAT_LAT, RAHAT_LNG],
+        popup="Rahat (center)",
+        icon=folium.Icon(color="green", icon="info-sign"),
+    ).add_to(m)
+    Circle(
+        location=[OFAKIM_LAT, OFAKIM_LNG],
+        radius=OFAKIM_RADIUS_M,
+        color="#8000ff",
+        fill=True,
+        fill_color="#8000ff",
+        fill_opacity=0.15,
+        popup=f"Ofakim radius: {OFAKIM_RADIUS_M / 1000:.0f} km",
+    ).add_to(m)
+    Marker(
+        location=[OFAKIM_LAT, OFAKIM_LNG],
+        popup="Ofakim (center)",
+        icon=folium.Icon(color="blue", icon="info-sign"),
     ).add_to(m)
     if places:
         for p in places:

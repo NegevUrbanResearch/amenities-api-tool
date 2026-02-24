@@ -12,9 +12,24 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BEER_SHEVA_LAT = 31.2518
-BEER_SHEVA_LNG = 34.7913
-RADIUS_M = 15000  # 15 km
+BEER_SHEVA_LAT = 31.2448
+BEER_SHEVA_LNG = 34.8428
+BEER_SHEVA_RADIUS_M = 16000
+
+RAHAT_LAT = 31.39250
+RAHAT_LNG = 34.75444
+RAHAT_RADIUS_M = 10000
+
+OFAKIM_LAT = 31.317
+OFAKIM_LNG = 34.617
+OFAKIM_RADIUS_M = 10000
+
+SEARCH_AREAS = [
+    ("beer_sheva", BEER_SHEVA_LAT, BEER_SHEVA_LNG, BEER_SHEVA_RADIUS_M),
+    ("rahat", RAHAT_LAT, RAHAT_LNG, RAHAT_RADIUS_M),
+    ("ofakim", OFAKIM_LAT, OFAKIM_LNG, OFAKIM_RADIUS_M),
+]
+
 BASE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 
 # All place types from Table 1 (searchable in Nearby Search)
@@ -86,47 +101,50 @@ def fetch_all_places(api_key: str, output_dir: str = OUTPUT_DIR) -> list[dict]:
     csv_path = os.path.join(output_dir, "amenities_beer_sheva.csv")
     json_path = os.path.join(output_dir, "amenities_beer_sheva.json")
 
-    for i, place_type in enumerate(PLACE_TYPES):
-        page_token = None
-        page = 0
-        label = place_type or "all"
-        print(f"[{i+1}/{len(PLACE_TYPES)}] type={label}", end=" ")
-        type_count = 0
-        while True:
-            try:
-                data = nearby_search(
-                    api_key,
-                    BEER_SHEVA_LAT,
-                    BEER_SHEVA_LNG,
-                    RADIUS_M,
-                    place_type=place_type,
-                    page_token=page_token,
-                )
-            except requests.RequestException as e:
-                print(f" error: {e}")
-                break
-            status = data.get("status")
-            if status == "ZERO_RESULTS":
-                print("0")
-                break
-            if status != "OK":
-                print(f" status={status}")
-                break
-            for place in data.get("results", []):
-                pid = place.get("place_id")
-                if pid and pid not in seen_ids:
-                    seen_ids.add(pid)
-                    flat = flatten_place(place)
-                    flat["search_type"] = place_type or "all"
-                    results.append(flat)
-                    type_count += 1
-            page_token = data.get("next_page_token")
-            if not page_token:
-                print(type_count)
-                break
-            page += 1
-            time.sleep(2)
-        time.sleep(0.2)
+    for area_name, lat, lng, radius in SEARCH_AREAS:
+        print(f"=== area={area_name} radius_km={radius/1000:.1f} ===")
+        for i, place_type in enumerate(PLACE_TYPES):
+            page_token = None
+            page = 0
+            label = place_type or "all"
+            print(f"[{i+1}/{len(PLACE_TYPES)}] type={label}", end=" ")
+            type_count = 0
+            while True:
+                try:
+                    data = nearby_search(
+                        api_key,
+                        lat,
+                        lng,
+                        radius,
+                        place_type=place_type,
+                        page_token=page_token,
+                    )
+                except requests.RequestException as e:
+                    print(f" error: {e}")
+                    break
+                status = data.get("status")
+                if status == "ZERO_RESULTS":
+                    print("0")
+                    break
+                if status != "OK":
+                    print(f" status={status}")
+                    break
+                for place in data.get("results", []):
+                    pid = place.get("place_id")
+                    if pid and pid not in seen_ids:
+                        seen_ids.add(pid)
+                        flat = flatten_place(place)
+                        flat["search_type"] = place_type or "all"
+                        flat["search_area"] = area_name
+                        results.append(flat)
+                        type_count += 1
+                page_token = data.get("next_page_token")
+                if not page_token:
+                    print(type_count)
+                    break
+                page += 1
+                time.sleep(2)
+            time.sleep(0.2)
 
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         if results:
