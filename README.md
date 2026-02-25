@@ -6,6 +6,7 @@ Fetches Google Places (Legacy) Nearby Search for Beer Sheva, Israel and visualiz
 
 - **fetch_places.py** — Runs Nearby Search per place type (restaurant, cafe, pharmacy, etc.), paginates, deduplicates by `place_id`, and writes CSV + JSON to `output/`
 - **visualize_area.py** — Builds a Folium map of the search area; overlays places if `output/amenities_beer_sheva.json` exists
+- **convert_to_geojson.py** — Converts `output/amenities_beer_sheva.json` to WGS84 GeoJSON `FeatureCollection` at `output/amenities_beer_sheva.geojson`
 
 ## Setup
 
@@ -30,9 +31,10 @@ Fetches Google Places (Legacy) Nearby Search for Beer Sheva, Israel and visualiz
 ```bash
 python fetch_places.py
 python visualize_area.py
+python convert_to_geojson.py
 ```
 
-Outputs: `output/amenities_beer_sheva.csv`, `output/amenities_beer_sheva.json`, `output/search_area.html`
+Outputs: `output/amenities_beer_sheva.csv`, `output/amenities_beer_sheva.json`, `output/amenities_beer_sheva.geojson`, `output/search_area.html`
 
 ## Cost
 
