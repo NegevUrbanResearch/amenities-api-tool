@@ -42,4 +42,4 @@ Places API (New) Nearby Search is billed per request.
 
 - **Free tier**: The first **10,000 requests per month are free**.
 - **After free tier**: Pricing is per 1K requests with volume discounts (see Google Maps Platform pricing page for current ILS rates).
-- One full run of this script does roughly `(place types) × (1–3 requests per type)`, so edit `PLACE_TYPES` in `fetch_places.py` to control usage.
+- One full run of this script does roughly 1500 requests with default parameters
