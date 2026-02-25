@@ -1,6 +1,6 @@
-# Google Places → Beer Sheva Amenities
+# Google Places (New) → Beer Sheva Amenities
 
-Fetches Google Places (Legacy) Nearby Search for Beer Sheva, Israel and visualizes the search area on a map.
+Fetches Google Places (New) Nearby Search for Beer Sheva, Israel and visualizes the search area on a map.
 
 ## What it does
 
@@ -12,8 +12,8 @@ Fetches Google Places (Legacy) Nearby Search for Beer Sheva, Israel and visualiz
 
 1. **API key**
    - Create one at [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-   - Enable **Places API** (Legacy) for the project
-   - Restrict the key to Places API and your IP
+   - Enable **Places API (New)** for the project (`places.googleapis.com`)
+   - Restrict the key to Places API (New) and your IP
 
 2. **Dependencies**
    ```bash
@@ -38,4 +38,8 @@ Outputs: `output/amenities_beer_sheva.csv`, `output/amenities_beer_sheva.json`, 
 
 ## Cost
 
-Places API (Legacy) is billed per request. One run does roughly `(place types) × (1–3 requests per type)`. Edit `PLACE_TYPES` in `fetch_places.py` to reduce scope.
+Places API (New) Nearby Search is billed per request.
+
+- **Free tier**: The first **10,000 requests per month are free**.
+- **After free tier**: Pricing is per 1K requests with volume discounts (see Google Maps Platform pricing page for current ILS rates).
+- One full run of this script does roughly `(place types) × (1–3 requests per type)`, so edit `PLACE_TYPES` in `fetch_places.py` to control usage.
